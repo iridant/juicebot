@@ -11,6 +11,13 @@ module.exports = {
 				.addUserOption(option => option.setName('target').setDescription('The user')))
 		.addSubcommand(subcommand =>
 			subcommand
+				.setName('pass')
+				.setDescription('Passes the juul.')
+				.addUserOption(option => option.setName('target').setDescription('The user'))
+				.setRequired(true))
+					
+		.addSubcommand(subcommand =>
+			subcommand
 				.setName('steal')
 				.setDescription('Steals the juul'))
 		.addSubcommand(subcommand =>
