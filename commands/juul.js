@@ -33,7 +33,7 @@ module.exports = {
 			await interaction.reply('hit juul');
 		} else if (interaction.options.getSubcommand() === 'pass') {
 			await interaction.reply('pass juul');
-		} else if (interaction.options.getSubcommand() === 'flavor') {
+		} else if (interaction.options.getSubcommand() === 'pod') {
 			await interaction.reply('set flavor of juul');
 		} else if (interaction.options.getSubcommand() === 'steal') {
 			await interaction.reply('steal juul');
