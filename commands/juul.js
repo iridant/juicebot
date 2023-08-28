@@ -1,3 +1,5 @@
+const endb = require("../endb");
+
 const { SlashCommandBuilder } = require('discord.js');
 
 module.exports = {
@@ -29,6 +31,11 @@ module.exports = {
 		),
 				
 	async execute(interaction) {
+
+		endb.set("noob", "hi");
+
+		await interaction.reply(endb.get("noob"));
+
 		if (interaction.options.getSubcommand() === 'hit') {
 			await interaction.reply('hit juul');
 		} else if (interaction.options.getSubcommand() === 'pass') {
@@ -38,5 +45,7 @@ module.exports = {
 		} else if (interaction.options.getSubcommand() === 'steal') {
 			await interaction.reply('steal juul');
 		}
+
+		
 	},
 };
