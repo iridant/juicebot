@@ -5,35 +5,28 @@ module.exports = {
 		.setName('juul')
 		.setDescription('Get info about a user or a server!')
 		.addSubcommand(subcommand =>
-			subcommand
-				.setName('hit')
+			subcommand.setName('hit')
 				.setDescription('Hits the juul.')
-			)
-		.addSubcommand(subcommand =>
-			subcommand
-				.setName('pass')
+		).addSubcommand(subcommand =>
+			subcommand.setName('pass')
 				.setDescription('Passes the juul.')
 				.addUserOption(option => 
 					option.setName('target')
 						.setDescription('The user to pass to')
 						.setRequired(true)
-				)
-			)
-					
-		.addSubcommand(subcommand =>
-			subcommand
-				.setName('steal')
-				.setDescription('Steals the juul'))
-		.addSubcommand(subcommand =>
-			subcommand
-				.setName('pod')
+					)
+		).addSubcommand(subcommand =>
+			subcommand.setName('steal')
+				.setDescription('Steals the juul')
+		).addSubcommand(subcommand =>
+			subcommand.setName('pod')
 				.setDescription('Sets the pod type')
 				.addStringOption(option =>
-					option.setName('Pod type')
+					option.setName('Flavor')
 						.setDescription('The type of pod to put in the device.')
 						.setRequired(true)
-				)
-			),
+					)
+		),
 				
 	async execute(interaction) {
 		await interaction.reply('we sipping juice 4 life buddy');
