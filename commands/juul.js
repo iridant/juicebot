@@ -8,13 +8,17 @@ module.exports = {
 			subcommand
 				.setName('hit')
 				.setDescription('Hits the juul.')
-				.addUserOption(option => option.setName('target').setDescription('The user')))
+			)
 		.addSubcommand(subcommand =>
 			subcommand
 				.setName('pass')
 				.setDescription('Passes the juul.')
-				.addUserOption(option => option.setName('target').setDescription('The user'))
-				.setRequired(true))
+				.addUserOption(option => 
+					option.setName('target')
+						.setDescription('The user to pass to')
+						.setRequired(true)
+				)
+			)
 					
 		.addSubcommand(subcommand =>
 			subcommand
@@ -23,7 +27,13 @@ module.exports = {
 		.addSubcommand(subcommand =>
 			subcommand
 				.setName('pod')
-				.setDescription('Sets the pod type')),
+				.setDescription('Sets the pod type')
+				.addStringOption(option =>
+					option.setName('Pod type')
+						.setDescription('The type of pod to put in the device.')
+						.setRequired(true)
+				)
+			),
 				
 	async execute(interaction) {
 		await interaction.reply('we sipping juice 4 life buddy');
