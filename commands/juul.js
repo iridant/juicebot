@@ -1,4 +1,7 @@
 const { SlashCommandBuilder } = require('discord.js');
+const db = require("../endb");
+
+var flavor = "menthol";
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -30,14 +33,39 @@ module.exports = {
 				
 	async execute(interaction) {
 
+		const caller = interaction.user.id
+
 		if (interaction.options.getSubcommand() === 'hit') {
-			await interaction.reply('hit juul');
+			await interaction.reply(`${interaction.user.username} just hit the ${flavor} flavored juul.`)
+
+			// does user have juul (interaction.user.id)
+
+			//yes: hit
+
+
+			// no: say you dont have juul
+
 		} else if (interaction.options.getSubcommand() === 'pass') {
-			await interaction.reply('pass juul');
+			// does user have juul (interaction.user.id)
+
+			//yes: pass to other user
+
+
+			// no: say you dont have juul
 		} else if (interaction.options.getSubcommand() === 'pod') {
 			await interaction.reply('set flavor of juul');
+			// does user have juul (interaction.user.id)
+
+			//yes:
+
+
+			// no:
 		} else if (interaction.options.getSubcommand() === 'steal') {
-			await interaction.reply('steal juul');
+			// does user have juul (interaction.user.id)
+
+			// yes: you already have it 
+
+			// no : steal juul
 		}
 
 		
