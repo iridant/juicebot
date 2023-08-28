@@ -21,6 +21,9 @@ module.exports = {
 		).addSubcommand(subcommand =>
 			subcommand.setName('pod')
 				.setDescription('Sets the pod type')
+				.addStringOption(options => 
+					options.setName("Flavor")
+				)
 		),
 				
 	async execute(interaction) {
