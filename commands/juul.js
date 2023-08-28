@@ -22,7 +22,7 @@ module.exports = {
 			subcommand.setName('pod')
 				.setDescription('Sets the pod type')
 				.addStringOption(options => 
-					options.setName("Flavor")
+					options.setName("flavor")
 				)
 		),
 				
