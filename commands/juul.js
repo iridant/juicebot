@@ -23,6 +23,7 @@ module.exports = {
 				.setDescription('Sets the pod type')
 				.addStringOption(options => 
 					options.setName("flavor")
+						.setDescription("Flavor of pod to put into the juul")
 				)
 		),
 				
