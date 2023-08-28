@@ -1,4 +1,4 @@
-const Endb = require('endb');
-const endb = new Endb('sqlite://mdb.sqlite');
+const sqlite3 = require('sqlite3').verbose();
+var db = new sqlite3.Database("db");
 
-module.exports = endb
+module.exports = db
