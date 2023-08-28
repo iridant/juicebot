@@ -1,7 +1,5 @@
 const { SlashCommandBuilder } = require("discord.js");
-const { spawn } = require("child_process");
 const { EmbedBuilder } = require("discord.js");
-const { execSync } = require("child_process");
 
 const alphabetl = "abcdefghijklmnopqrstuvwxyz"
 const alphabetu = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -32,10 +30,10 @@ function stringToCeasar(string, offset, scrambled){
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName("caesar")
-		.setDescription("Converts a string into an image containing the corresponding pigpen cipher..")
+		.setDescription("Converts a string into a caesar cipher..")
 		.addStringOption(option =>
 			option.setName("string")
-			.setDescription("String to be converted into pigpen.")
+			.setDescription("String to be converted into caesar.")
 			.setRequired(true)
 		).addBooleanOption(option =>
 			option.setName("scrambled")
