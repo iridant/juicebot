@@ -33,10 +33,10 @@ module.exports = {
 				
 	async execute(interaction) {
 
-		const caller = interaction.user.id
+		const caller = interaction.user.id;
 
 		if (interaction.options.getSubcommand() === 'hit') {
-			await interaction.reply(`${interaction.user.username} just hit the ${flavor} flavored juul.`)
+			await interaction.reply(`${interaction.user.username} just hit the ${flavor} juul.`);
 
 			// does user have juul (interaction.user.id)
 
@@ -53,7 +53,9 @@ module.exports = {
 
 			// no: say you dont have juul
 		} else if (interaction.options.getSubcommand() === 'pod') {
-			await interaction.reply('set flavor of juul');
+			const newflavor = interaction.options.getString("flavor");
+			flavor = newflavor;
+			await interaction.reply(`${interaction.user.username} put a ${newflavor} pod into the juul.`);
 			// does user have juul (interaction.user.id)
 
 			//yes:
