@@ -24,10 +24,19 @@ module.exports = {
 				.addStringOption(options => 
 					options.setName("flavor")
 						.setDescription("Flavor of pod to put into the juul")
+						.setRequired(true)
 				)
 		),
 				
 	async execute(interaction) {
-		await interaction.reply('we sipping juice 4 life buddy');
+		if (interaction.options.getSubcommand() === 'hit') {
+			await interaction.reply('hit juul');
+		} else if (interaction.options.getSubcommand() === 'pass') {
+			await interaction.reply('pass juul');
+		} else if (interaction.options.getSubcommand() === 'flavor') {
+			await interaction.reply('set flavor of juul');
+		} else if (interaction.options.getSubcommand() === 'steal') {
+			await interaction.reply('steal juul');
+		}
 	},
 };
