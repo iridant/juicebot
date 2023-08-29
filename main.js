@@ -2,14 +2,14 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, Events, GatewayIntentBits, PermissionFlagsBits, OAuth2Scopes } = require('discord.js');
 const { token } = require('./config.json')
-const Logger = require("./logger.js")
+const Logger = require("./logger.js");
+
+const db = require("./dbd.js");
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildInvites,
-    GatewayIntentBits.DirectMessages] });
+    GatewayIntentBits.DirectMessages, GatewayIntentBits.GuildMembers] });
 
 // Register Commands
-
-// TODO - MAKE C++ INJECTABLE SELFBOT FOR ADVERTISING PURPOSES
 client.commands = new Collection();
 const commandsPath = path.join(__dirname, 'commands');
 const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
@@ -26,9 +26,8 @@ client.once(Events.ClientReady, () => {
     console.log(client.guilds.cache.map(guild => guild.name));
 });
 
-
-    // Interaction Created Event
-    client.on(Events.InteractionCreate, async interaction => {
+// Interaction Created Event
+client.on(Events.InteractionCreate, async interaction => {
 	if (!interaction.isChatInputCommand()) return;
 
 	const command = client.commands.get(interaction.commandName);
@@ -104,7 +103,7 @@ client.on("channelUpdate", function(oldChannel, newChannel){
 PARAMETER    TYPE         DESCRIPTION
 info         string       The debug information    */
 client.on("debug", function(info){
-    console.log(`debug -> ${info}`);
+    console.log(`[debug] (discord.js) | -> ${info}`);
 });
 
 // emojiCreate
@@ -189,8 +188,21 @@ client.on("guildIntegrationsUpdate", function(guild){
 /* Emitted whenever a user joins a guild.
 PARAMETER     TYPE               DESCRIPTION
 member        GuildMember        The member that has joined a guild    */
-client.on("guildMemberAdd", function(member){
-    console.log(`a user joins a guild: ${member.tag}`);
+client.on("guildMemberAdd", async function(member){
+    console.log(`A user has joined a guild: ${member.username}`);
+
+    const user = await db.User.findOne({ where: { userid: member.id } });
+
+    if(!user){
+        const newUser = await db.User.create({
+            userid: member.id
+        });
+    
+        console.log(`Added user ${member.username} to SQL database.`)
+    }else{
+        console.log("User is already in database.")
+    }
+    
 });
 
 // guildMemberAvailable
@@ -205,8 +217,17 @@ client.on("guildMemberAvailable", function(member){
 /* Emitted whenever a member leaves a guild, or is kicked.
 PARAMETER     TYPE               DESCRIPTION
 member        GuildMember        The member that has left/been kicked from the guild    */
-client.on("guildMemberRemove", function(member){
+client.on("guildMemberRemove", async function(member){
     console.log(`a member leaves a guild, or is kicked: ${member.tag}`);
+
+    const user = await db.User.findOne({ where: { userid: member.id } });
+
+    if(!user){
+        console.warn("User somehow avoided the database.")
+    }else{
+        user.update({"lastleavedate": Date.now()})
+        console.log(`${member.username} has left the server.`)
+    }
 });
 
 // guildMembersChunk

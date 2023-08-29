@@ -35,15 +35,20 @@ module.exports = {
 
 		const caller = interaction.user.id;
 
+		const cUser = await db.User.findOne({ where: {userid: caller} });
+		const juulHits = await db.Settings.findOne({ where: {setting: "juul_hits"} });
+
+		
+
 		if (interaction.options.getSubcommand() === 'hit') {
-			await interaction.reply(`${interaction.user.username} just hit the ${flavor} juul.`);
+			
 
-			// does user have juul (interaction.user.id)
-
-			//yes: hit
-
-
-			// no: say you dont have juul
+			if(cUser.has_juul){
+				await interaction.reply(`${interaction.user.username} just hit the ${flavor} juul.`);
+				console.log(juulHits)
+			}else{
+				await interaction.reply(`You don't have the juul..`);
+			}
 
 		} else if (interaction.options.getSubcommand() === 'pass') {
 			// does user have juul (interaction.user.id)
@@ -64,6 +69,19 @@ module.exports = {
 			// no:
 		} else if (interaction.options.getSubcommand() === 'steal') {
 			// does user have juul (interaction.user.id)
+
+			if(cUser.has_juul){
+				await interaction.reply(`You already have it.`);
+			}else{
+				const juulOwner = await db.User.findOne({ where: {has_juul: true} });
+
+				juulOwner.update({has_juul: false})
+				cUser.update({has_juul: true})
+
+				console.log(interaction.client.users.cache.get(juulOwner.userid));
+
+				await interaction.reply(`${interaction.user.username} just stole the juul from ${interaction.client.users.cache.get(juulOwner.userid)}`)
+			}
 
 			// yes: you already have it 
 

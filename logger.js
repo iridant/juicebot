@@ -1,15 +1,15 @@
 class Logger{
-    log(time, str){
-        console.log("log")
+    static log(time, str){
+        console.log(`[LOG] (${time}) | ${str}`)
     }
 
-    warn(time, str){
-        console.log("warn")
+    static warn(time, str){
+        console.log(`[WARN] (${time}) | ${str}`)
     }
 
-    critical(time, str){
-        console.log("critical")
+    static error(time, str){
+        console.log(`[ERROR] (${time}) | ${str}`)
     }
 }
 
-module.exports = Logger
+module.exports = {Logger}
