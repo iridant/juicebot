@@ -1,5 +1,4 @@
 const { SlashCommandBuilder } = require('discord.js');
-const db = require("../dbd.js");
 
 var flavor = "menthol";
 
@@ -86,6 +85,8 @@ module.exports = {
 			// yes: you already have it 
 
 			// no : steal juul
+
+
 		}
 
 		

@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require("discord.js");
-const db = require("../dbd.js");
+const db = require("../util/dbd.js");
 
 var flavor = "menthol";
 

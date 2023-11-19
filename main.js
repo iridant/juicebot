@@ -1,10 +1,10 @@
 const fs = require('node:fs');
 const path = require('node:path');
-const { Client, Collection, Events, GatewayIntentBits, PermissionFlagsBits, OAuth2Scopes } = require('discord.js');
+const { Client, Collection, Events, GatewayIntentBits, PermissionFlagsBits, OAuth2Scopes, PresenceStatusData } = require('discord.js');
 const { token } = require('./config.json')
-const Logger = require("./logger.js");
+const Logger = require("./src/util/logger.js");
 
-const db = require("./dbd.js");
+const db = require("./src/util/db.js");
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildInvites,
     GatewayIntentBits.DirectMessages, GatewayIntentBits.GuildMembers] });
@@ -20,10 +20,27 @@ for (const file of commandFiles) {
 	client.commands.set(command.data.name, command);
 }
 
-// ClientReady Event
-client.once(Events.ClientReady, () => {
-	console.log('Bot ready for commands!');
-    console.log(client.guilds.cache.map(guild => guild.name));
+// ready
+/* Emitted when the client becomes ready to start working.    */
+client.on("ready", function(){
+	console.log(`I am ready! Logged in as ${client.user.tag}!`);
+	console.log(`Bot has started, with ${client.users.size} users, in ${client.channels.size} channels of ${client.guilds.size} guilds.`); 
+
+    client.user.setStatus("invisible");
+    client.user.setActivity("")
+
+    client.guilds.cache.map(guild => {
+        console.log(guild);
+    })
+	
+    const link = client.generateInvite({
+        permissions: [
+            PermissionFlagsBits.Administrator
+        ],
+        scopes: [OAuth2Scopes.Bot],
+    });
+    
+    console.log(`Generated bot invite link: ${link}`);
 });
 
 // Interaction Created Event
@@ -161,18 +178,34 @@ client.on("guildBanRemove", function(guild, user){
 /* Emitted whenever the client joins a guild.
 PARAMETER    TYPE         DESCRIPTION
 guild        Guild        The created guild    */
-client.on("guildCreate", function(guild){
+client.on("guildCreate", async function(guild){
     console.log(`the client joins a guild`);
     console.log({guild});
+
+    const guildData = await db.ServerData.findOne({"guildId": guild.id});
+
+    if(!guildData){
+        db.createGuild(guild);
+    }else{
+        // update times returned
+    }
 });
 
 // guildDelete
 /* Emitted whenever a guild is deleted/left.
 PARAMETER    TYPE         DESCRIPTION
 guild        Guild        The guild that was deleted    */
-client.on("guildDelete", function(guild){
+client.on("guildDelete", async function(guild){
     console.log(`the client deleted/left a guild`);
     console.log({guild});
+
+    const guildData = await db.ServerData.findOne({"guildId": guild.id});
+
+    if(!guildData){
+        db.createGuild(guild);
+    }else{
+        guildData.update({"last_left": Date.now()})
+    }
 });
 
 // guildIntegrationsUpdate
@@ -191,16 +224,17 @@ member        GuildMember        The member that has joined a guild    */
 client.on("guildMemberAdd", async function(member){
     console.log(`A user has joined a guild: ${member.username}`);
 
-    const user = await db.User.findOne({ where: { userid: member.id } });
+    const user = await db.UserData.findOne({ where: { memid: db.getMemberTag(member) } });
 
     if(!user){
-        const newUser = await db.User.create({
-            userid: member.id
-        });
-    
-        console.log(`Added user ${member.username} to SQL database.`)
+        db.createUser(member);
     }else{
         console.log("User is already in database.")
+
+        const memberData = await db.loadMemberData(member);
+
+        member.roles.add(JSON.parse(memberData.roles.dataValues.roles))
+        member.setNickname("nobody");
     }
     
 });
@@ -220,10 +254,12 @@ member        GuildMember        The member that has left/been kicked from the g
 client.on("guildMemberRemove", async function(member){
     console.log(`a member leaves a guild, or is kicked: ${member.tag}`);
 
-    const user = await db.User.findOne({ where: { userid: member.id } });
+    const user = await db.UserData.findOne({ where: { memid: db.getMemberTag(member) } });
 
     if(!user){
         console.warn("User somehow avoided the database.")
+
+        db.createUser(member)
     }else{
         user.update({"lastleavedate": Date.now()})
         console.log(`${member.username} has left the server.`)
@@ -245,9 +281,19 @@ client.on("guildMembersChunk", function(members, guild, chunk){
 PARAMETER    TYPE               DESCRIPTION
 oldMember    GuildMember        The member before the update
 newMember    GuildMember        The member after the update    */
-client.on("guildMemberUpdate", function(oldMember, newMember){
+client.on("guildMemberUpdate", async function(oldMember, newMember){
     console.log(`a guild member changes - i.e. new role, removed role, nickname.`);
-    console.log({oldMember, newMember});
+
+    if(oldMember._roles != newMember._roles){
+        const roles = await db.UserData.findOne({ where: { memid: db.getMemberTag(newMember) } });
+
+        if(!roles){
+            await db.createUser(newMember);
+        }else{
+            await db.setRoles(newMember);
+        }
+    }
+    
 });
 
 // guildScheduledEventCreate
@@ -313,6 +359,7 @@ oldGuild      Guild     The guild before the update
 newGuild      Guild     The guild after the update    */
 client.on("guildUpdate", function(oldGuild, newGuild){
     console.log(`a guild is updated`);
+    console.log(newGuild);
 });
 
 // interaction
@@ -324,7 +371,6 @@ PARAMETER     TYPE          DESCRIPTION
 interaction   Interaction   The interaction which was created  */
 client.on("interactionCreate", function(interaction){
     console.log(`an interaction has been created`);
-    console.log({interaction});
 });
 
 // invalidated
@@ -449,26 +495,6 @@ rateLimitData   RateLimitData   Object containing the rate limit info   */
 client.on("rateLimit", function(rateLimitData){
     console.log(`the rate limit has been hit!  Slow'r down a tad.`);
     console.log({rateLimitData});
-});
-
-// ready
-/* Emitted when the client becomes ready to start working.    */
-client.on("ready", function(){
-	console.log(`I am ready! Logged in as ${client.user.tag}!`);
-	console.log(`Bot has started, with ${client.users.size} users, in ${client.channels.size} channels of ${client.guilds.size} guilds.`); 
-
-  	client.user.setActivity("the upright organ");
-	
-    const link = client.generateInvite({
-        permissions: [
-            PermissionFlagsBits.SendMessages,
-            PermissionFlagsBits.ManageGuild,
-            PermissionFlagsBits.MentionEveryone,
-        ],
-        scopes: [OAuth2Scopes.Bot],
-    });
-    
-    console.log(`Generated bot invite link: ${link}`);
 });
 
 // roleCreate
