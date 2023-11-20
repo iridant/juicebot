@@ -23,7 +23,7 @@ for (const file of commandFiles) {
 /* Emitted when the client becomes ready to start working.    */
 client.on("ready", function(){
 	console.log(`I am ready! Logged in as ${client.user.tag}!`);
-	console.log(`Bot has started, with ${client.users.size} users, in ${client.channels.size} channels of ${client.guilds.size} guilds.`); 
+	console.log(`Bot has started, with guilds.`); 
 
     client.user.setStatus("invisible");
     client.user.setActivity("")
@@ -67,7 +67,7 @@ client.on(Events.InteractionCreate, async interaction => {
 PARAMETER    TYPE        DESCRIPTION
 request      APIRequest     The request that is about to be sent    */
 client.on("apiRequest", function(req){
-    console.log(`apiRequest: ${req}`);
+    console.log(`apiRequest: `);
 });
 
 // apiResponse
@@ -75,7 +75,7 @@ client.on("apiRequest", function(req){
 PARAMETER    TYPE        DESCRIPTION
 request      APIRequest     The request that is about to be sent    */
 client.on("apiResponse", function(res){
-    console.log(`apiResponse: ${res}`);
+    console.log(`apiResponse: `);
 });
 
 // the previous, apiRequest and apiResponse, are informational events that are emitted quite frequently, it is highly recommended to check request.path to filter the data.
@@ -85,7 +85,7 @@ client.on("apiResponse", function(res){
 PARAMETER    TYPE        DESCRIPTION
 channel      Channel     The channel that was created    */
 client.on("channelCreate", function(channel){
-    console.log(`channelCreate: ${channel}`);
+    console.log(`channelCreate: `);
 });
 
 // channelDelete
@@ -93,7 +93,7 @@ client.on("channelCreate", function(channel){
 PARAMETER   TYPE      DESCRIPTION
 channel     Channel   The channel that was deleted    */
 client.on("channelDelete", function(channel){
-    console.log(`channelDelete: ${channel}`);
+    console.log(`channelDelete: `);
 });
 
 // channelPinsUpdate
@@ -102,7 +102,7 @@ PARAMETER    TYPE         DESCRIPTION
 channel      Channel      The channel that the pins update occurred in
 time         Date         The time of the pins update    */
 client.on("channelPinsUpdate", function(channel, time){
-    console.log(`channelPinsUpdate: ${channel}:${time}`);
+    console.log(`channelPinsUpdate: `);
 });
     
 // channelUpdate
@@ -179,7 +179,6 @@ PARAMETER    TYPE         DESCRIPTION
 guild        Guild        The created guild    */
 client.on("guildCreate", async function(guild){
     console.log(`the client joins a guild`);
-    console.log({guild});
 
     const guildData = await db.ServerData.findOne({"guildId": guild.id});
 
@@ -196,7 +195,6 @@ PARAMETER    TYPE         DESCRIPTION
 guild        Guild        The guild that was deleted    */
 client.on("guildDelete", async function(guild){
     console.log(`the client deleted/left a guild`);
-    console.log({guild});
 
     const guildData = await db.ServerData.findOne({"guildId": guild.id});
 
@@ -213,7 +211,6 @@ PARAMETER   TYPE    DESCRIPTION
 guild       Guild   The guild whose integrations were updated   */
 client.on("guildIntegrationsUpdate", function(guild){
     console.log(`a guild integration is updated`);
-    console.log({guild});
 });
 
 // guildMemberAdd
@@ -261,7 +258,7 @@ client.on("guildMemberRemove", async function(member){
         db.createUser(member)
     }else{
         user.update({"lastleavedate": Date.now()})
-        console.log(`${member.username} has left the server.`)
+        console.log(`has left the server.`)
     }
 });
 
@@ -272,7 +269,7 @@ members        Array<GuildMember>        The members in the chunk
 guild          Guild                     The guild related to the member chunk    */
 client.on("guildMembersChunk", function(members, guild, chunk){
     console.log(`a chunk of guild members is received`);
-    console.log({members, guild, chunk});
+    
 });
 
 // guildMemberUpdate
@@ -301,7 +298,7 @@ PARAMETER             TYPE                  DESCRIPTION
 guildScheduledEvent   GuildScheduledEvent   The created guild scheduled event   */
 client.on("guildScheduledEventCreate", function(guildScheduledEvent){
     console.log(`guild scheduled event is created.`);
-    console.log({guildScheduledEvent});
+    
 });
 
 // guildScheduledEventDelete
@@ -310,7 +307,7 @@ PARAMETER             TYPE                  DESCRIPTION
 guildScheduledEvent   GuildScheduledEvent   The deleted guild scheduled event   */
 client.on("guildScheduledEventDelete", function(guildScheduledEvent){
     console.log(`a guild scheduled event is deleted`);
-    console.log({guildScheduledEvent});
+    
 });
 
 // guildScheduledEventUpdate
@@ -320,7 +317,7 @@ oldGuildScheduledEvent   ?GuildScheduledEvent   The guild scheduled event object
 newGuildScheduledEvent   GuildScheduledEvent    The guild scheduled event object after the update  */
 client.on("guildScheduledEventUpdate", function(oldGuildScheduledEvent, newGuildScheduledEvent){
     console.log(`guild scheduled event has been updated`);
-    console.log({oldGuildScheduledEvent, newGuildScheduledEvent});
+    
 });
 
 // guildScheduledEventUserAdd
@@ -330,7 +327,7 @@ guildScheduledEvent   GuildScheduledEvent   The guild scheduled event
 user                  User                  The user who subscribed */ 
 client.on("guildScheduledEventUserAdd", function(guildScheduledEvent, user){
     console.log(`a user subscribed to a guild scheduled event`);
-    console.log({guildScheduledEvent, user});
+    
 });
 
 // guildScheduledEventUserRemove
@@ -340,7 +337,7 @@ guildScheduledEvent   GuildScheduledEvent   The guild scheduled event
 user                  User                  The user who unsubscribed */ 
 client.on("guildScheduledEventUserRemove", function(guildScheduledEvent, user){
     console.log(`a user unsubscribed from a guild scheduled event`);
-    console.log({guildScheduledEvent, user});
+    
 });
 
 // guildUnavailable
@@ -358,7 +355,6 @@ oldGuild      Guild     The guild before the update
 newGuild      Guild     The guild after the update    */
 client.on("guildUpdate", function(oldGuild, newGuild){
     console.log(`a guild is updated`);
-    console.log(newGuild);
 });
 
 // interaction
@@ -393,7 +389,6 @@ PARAMETER   TYPE    DESCRIPTION
 invite          Invite  The invite that was created  */
 client.on("inviteCreate", function(invite){
     console.log(`An invite was created`);
-    console.log({invite});
 });
 
 // inviteDelete
@@ -403,7 +398,6 @@ PARAMETER   TYPE    DESCRIPTION
 invite          Invite  The invite that was deleted */
 client.on("inviteDelete", function(invite){
     console.log(`an invite was deleted`);
-    console.log({invite});
 });
 
 // message
@@ -415,7 +409,6 @@ PARAMETER   TYPE      DESCRIPTION
 message     Message   The created message */
 client.on("messageCreate", function(message){
     console.log(`a message was created`);
-    console.log({message});
 });
 
 // messageDelete
@@ -466,7 +459,6 @@ PARAMETER   TYPE              DESCRIPTION
 reaction    MessageReaction   The reaction that was removed */
 client.on("messageReactionRemoveEmoji", function(reaction){
     console.log(`A reaction emoji was removed`);
-    console.log({reaction});
 });
 
 // messageUpdate
@@ -493,7 +485,6 @@ PARAMETER       TYPE            DESCRIPTION
 rateLimitData   RateLimitData   Object containing the rate limit info   */
 client.on("rateLimit", function(rateLimitData){
     console.log(`the rate limit has been hit!  Slow'r down a tad.`);
-    console.log({rateLimitData});
 });
 
 // roleCreate
@@ -527,8 +518,7 @@ PARAMETER   TYPE         DESCRIPTION
 event       CloseEvent   The WebSocket close event
 id          number       The shard id that disconnected */
 client.on("shardDisconnect", function(event, id){
-    console.log(`shard with id ${id} has disconnected`);
-    console.log({event, id});
+    console.log(`shard with id has disconnected`);
 });
 
 // shardError
@@ -548,7 +538,6 @@ id                   number             The shard id that turned ready
 unavailableGuilds    ?Set <Snowflake>   Set of unavailable guild ids, if any  */
 client.on("shardReady", function(id, unavailableGuilds){
     console.log(`a shard turned ready`);
-    console.log({id, unavailableGuilds});
 });
 
 // shardReconnecting
@@ -556,8 +545,7 @@ client.on("shardReady", function(id, unavailableGuilds){
 PARAMETER   TYPE     DESCRIPTION
 id          number   The shard id that is attempting to reconnect   */
 client.on("shardReconnecting", function(id){
-    console.log(`a shard with id ${id} is attempting to reconnect or re-identify`);
-    console.log({id});
+    console.log(`a shard with id is attempting to reconnect or re-identify`);
 });
 
 // shardResume
@@ -567,7 +555,6 @@ id               number   The shard id that resumed
 replayedEvents   number   The amount of replayed events   */
 client.on("shardResume", function(id, replayedEvents){
     console.log(`a shard resumes successfully`);
-    console.log({id, replayedEvents});
 });
 
 // stageInstanceCreate
@@ -576,7 +563,6 @@ PARAMETER       TYPE            DESCRIPTION
 stageInstance   StageInstance   The created stage instance  */
 client.on("stageInstanceCreate", function(stageInstance){
     console.log(`a stage instance was created`);
-    console.log({stageInstance});
 });
 
 // stageInstanceDelete
@@ -585,7 +571,6 @@ PARAMETER       TYPE            DESCRIPTION
 stageInstance   StageInstance   The deleted stage instance   */
 client.on("stageInstanceDelete", function(stageInstance){
     console.log(`a stage instance is deleted`);
-    console.log({stageInstance});
 });
 
 // stageInstanceUpdate
@@ -595,7 +580,7 @@ oldStageInstance   ?StageInstance   The stage instance before the update
 newStageInstance   StageInstance    The stage instance after the update     */
 client.on("stageInstanceUpdate", function(oldStageInstance, newStageInstance){
     console.log(`stage instance has changed in topic or privacy level`);
-    console.log({oldStageInstance, newStageInstance});
+    
 });
 
 // stickerCreate
@@ -604,7 +589,7 @@ PARAMETER   TYPE      DESCRIPTION
 sticker     Sticker   The sticker that was created  */
 client.on("stickerCreate", function(sticker){
     console.log(`a custom sticker is created`);
-    console.log({sticker});
+    
 });
 
 // stickerDelete
@@ -613,7 +598,7 @@ PARAMETER   TYPE      DESCRIPTION
 sticker     Sticker   The sticker that was deleted  */
 client.on("stickerDelete", function(sticker){
     console.log(`a custom sticker is deleted`);
-    console.log({sticker});
+    
 });
 
 // stickerUpdate
@@ -623,7 +608,7 @@ oldSticker   Sticker   The old sticker
 newSticker   Sticker   The new sticker      */
 client.on("stickerUpdate", function(oldSticker, newSticker){
     console.log(`a custom sticker is updated`);
-    console.log({oldSticker, newSticker});
+    
 });
 
 // threadCreate
@@ -633,7 +618,7 @@ thread         ThreadChannel   The thread that was created
 newlyCreated   boolean         Whether the thread was newly created  */
 client.on("threadCreate", function(thread, newlyCreated){
     console.log(`a thread has been created or the client user is added to an existing thread.`);
-    console.log({thread, newlyCreated});
+    
 });
 
 // threadDelete
@@ -642,7 +627,7 @@ PARAMETER   TYPE            DESCRIPTION
 thread      ThreadChannel   The thread that was deleted     */
 client.on("threadDelete", function(thread){
     console.log(`a thread was deleted`);
-    console.log({thread});
+    
 });
 
 // threadListSync
@@ -651,7 +636,7 @@ PARAMETER   TYPE                                    DESCRIPTION
 threads     Collection <Snowflake, ThreadChannel>   The threads that were synced */
 client.on("threadListSync", function(threads){
     console.log(`the client user gains access to a text or news channel that contains threads`);
-    console.log({threads});
+    
 });
 
 // threadMembersUpdate
@@ -662,7 +647,7 @@ oldMembers   Collection <Snowflake, ThreadMember>   The members before the updat
 newMembers   Collection <Snowflake, ThreadMember>   The members after the update    */
 client.on("threadMembersUpdate", function(oldMembers, newMembers){
     console.log(`members are added or removed from a thread`);
-    console.log({oldMembers, newMembers});
+    
 });
 
 // threadMemberUpdate
@@ -672,7 +657,7 @@ oldMember   ThreadMember   The member before the update
 newMember   ThreadMember   The member after the update      */
 client.on("threadMemberUpdate", function(oldMember, newMember){
     console.log(`the client user's thread member is updated`);
-    console.log({oldMember, newMember});
+    
 });
 
 // threadUpdate
@@ -682,7 +667,7 @@ oldThread   ThreadChannel   The thread before the update
 newThread   ThreadChannel   The thread after the update     */
 client.on("threadUpdate", function(oldThread, newThread){
     console.log(`thread is updated - e.g. name change, archive state change, locked state change.`);
-    console.log({oldThread, newThread});
+    
 });
 
 // typingStart
@@ -691,7 +676,7 @@ PARAMETER      TYPE            DESCRIPTION
 channel        Channel         The channel the user started typing in
 user           User            The user that started typing    */
 client.on("typingStart", function(channel, user){
-    console.log(`${user.tag} has started typing`);
+    console.log(`has started typing`);
 });
 
 // userUpdate
