@@ -734,4 +734,4 @@ client.on("webhookUpdate", function(channel){
 });
 
 
-client.login(token);
+client.login(process.env.TOKEN);
